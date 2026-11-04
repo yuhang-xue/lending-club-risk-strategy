@@ -2,7 +2,7 @@
 
 **研究问题：在历史已放款且已终结的共同样本中，同样保留约80%的贷款，四字段逻辑回归相对信用分基线的保留核销率如何？**
 
-**项目状态（2026-10-30）：已完成有边界的历史研究交付。当前无法取得合格后续数据，独立验证与实际收益评估暂不执行。** 80%为样本保留率，不是全量申请审批通过率。见[最新核验与数据缺口](docs/historical-review/README.md)。
+**当前版本（2026-11-04）：历史S0/S1/S2比较与四字段WOE评分卡的实现、聚合结果和公开复现入口已提供；正式独立验证及实际收益评估仍未完成。** 80%为样本保留率，不是全量申请审批通过率。见[最新核验与数据缺口](docs/historical-review/README.md)。
 
 基于[Zenodo公开数据](https://zenodo.org/records/11295916)的 **1,347,681笔、15字段** 整理版贷款；Default按发布者定义为1=最终核销、0=全部结清。按批准年份切分：2007—2015训练，2016已查看补充评价，2017—2018仅核查状态汇总与适用性、未作策略效果评价。2014/2015采用只用此前年份训练的扩展开发窗口（训练起点固定为2007年）。详见[方法与SQL口径](docs/方法与SQL复现.md)。
 
@@ -32,11 +32,26 @@
 
 新增[金额代理与收益敏感性分析](docs/historical-review/经济情景分析.md)：同量保留并不等于同资金投入；loan_amnt仅作金额代理。216个假设情景的净现值差有正有负，不能据此认定真实收益改善。缺实际本金、逐期回款、回收和费用时，实际经济结论保持未完成。
 
-## 查看材料
+## 四字段WOE评分卡
 
-[六页项目展示](docs/六页项目展示.pdf) · [一页策略评审摘要](docs/策略评审摘要.pdf) · [15字段审核](docs/字段审核表.csv) · [监控与处置方案](docs/监控与处置方案.md) · [10项指标字典](docs/监控指标字典.csv)
+评分卡沿用FICO、用途、就业年限和住房状态；仅在各窗口训练样本拟合分箱与WOE，再训练固定逻辑回归。600分对应模型隐含好坏比20:1，PDO=50；分值可加总，不表示概率已经校准。
 
-`src/` 为固定核心流程，`sql/` 为9份查询及schema（SQLite，未验证MySQL），`audit/` 用于历史结果对账；[文件清单](docs/文件筛选清单.md)和[来源哈希](docs/source_provenance.json)记录整理过程。PDF为2026-10-24历史展示快照，未随本次更新重编；最新数据边界及收尾状态以本README和[完善说明](docs/historical-review/README.md)为准，当前可执行命令以本README为准。
+|已研究年份|评分卡−S1保留核销率（百分点）|95%配对区间|
+|---|---:|---|
+|2014|−0.030816|[−0.072837, +0.012887]|
+|2015|−0.028625|[−0.068909, +0.003329]|
+|2016|−0.046066|[−0.087451, +0.001280]|
+
+**三年主差值区间均跨0，未支持用评分卡替换S1。** 该结论不表示两种模型完全等效。[评分卡方法与结果](docs/评分卡方法与结果.md)提供公式、聚合证据和稳定性口径；[实现及复现](scorecard_v1/README.md)说明如何从原始CSV和已审计基线重新运行。
+
+## 当前材料与版本
+
+- [当前策略评审摘要](docs/当前策略评审摘要.md)：统一说明基线、评分卡与下一步。
+- [简历指标与证据](docs/简历指标与证据.md)：对应1,501笔、三年评分卡区间和固定卡PSI。
+- [版本与覆盖范围](docs/版本与覆盖范围.md)：区分当前公开实现、本地补充分析与历史展示。
+- [15字段审核](docs/字段审核表.csv) · [监控与处置方案](docs/监控与处置方案.md) · [指标字典](docs/监控指标字典.csv)。
+
+`src/`为基线与评分卡运行入口，`scorecard_v1/`为分箱、WOE/IV、评分、筛选与PSI实现；`sql/`为9份SQLite查询及schema，`audit/`负责结果对账。旧PDF为2026-10-24历史快照，已移至[历史展示目录](docs/archive/20261024/README.md)，当前结论以本首页和当前摘要为准。
 
 ## 复现
 
@@ -53,3 +68,26 @@ python audit/verify.py --run outputs/reproduction
 输出目录必须不存在。流程从CSV重建固定三年窗口S1/S2，执行6,000次配对bootstrap和9份SQL，不依赖旧项目、MySQL账号或历史模型。SQL01/02读取仓库附带的99行已发布上游状态汇总，其完整状态无法从已终结贷款CSV还原。模型、逐笔结果及SQLite数据库仅在已忽略的 `outputs/` 本地生成。
 
 验收要求：历史整数与NULL位置一致，浮点绝对误差≤1e−12；检查报告为 `outputs/reproduction/verification.json`。实测环境、耗时及对账记录见[复现验收](docs/复现验收.md)。
+
+## 评分卡复现与轻量核验
+
+评分卡使用单独锁定的依赖快照；建议为完整基线+评分卡重放新建环境，避免改变旧基线已记录环境：
+
+```sh
+python3 -m venv .venv-scorecard
+.venv-scorecard/bin/python -m pip install -r requirements-scorecard.txt
+.venv-scorecard/bin/python -m unittest discover -s scorecard_v1/tests -v
+.venv-scorecard/bin/python src/run.py --data data/raw/LC_loans_granting_model_dataset.csv --output outputs/baseline_for_scorecard
+.venv-scorecard/bin/python src/run_scorecard.py --data data/raw/LC_loans_granting_model_dataset.csv --baseline-run outputs/baseline_for_scorecard --output outputs/scorecard_reproduction
+```
+
+两个输出目录都必须不存在。评分卡入口先核验基线，再从原始CSV重训三张卡、执行每年2,000次配对重选和固定W1卡PSI；不需要本地私有路径、旧模型或历史中间文件。只对2007—2016开发/已查看范围训练和评价，2017—2018不作效果分析。逐笔结果和模型只写入已忽略的outputs目录。
+
+无需下载贷款数据也可检查公开聚合证据和运行合成边界测试：
+
+```sh
+.venv-scorecard/bin/python audit/verify_scorecard_public.py
+.venv-scorecard/bin/python -m unittest discover -s scorecard_v1/tests -v
+```
+
+聚合核验不等于重新训练或独立验证。[当前复现记录](docs/评分卡公开复现记录.md)区分本次实际执行与历史核验。

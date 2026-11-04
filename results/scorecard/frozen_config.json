@@ -1,0 +1,136 @@
+{
+  "frozen_at": "2026-11-02T18:57:27+08:00",
+  "parameters": {
+    "schema_version": 1,
+    "experiment": "scorecard_v1",
+    "features": [
+      "fico_n",
+      "purpose",
+      "emp_length",
+      "home_ownership_n"
+    ],
+    "numeric_prebins": 10,
+    "numeric_min_share": 0.05,
+    "category_min_share": 0.01,
+    "minimum_class_count": 20,
+    "quantile_method": "linear",
+    "alpha": 0.5,
+    "woe_direction": "ln(good_distribution/bad_distribution)",
+    "woe_denominator": "occupied_training_bins_only",
+    "psi_denominator": "all_frozen_bins_including_reserved",
+    "unknown_woe": 0.0,
+    "base_score": 600,
+    "base_good_bad_odds": 20,
+    "pdo": 50,
+    "model": {
+      "C": 1.0,
+      "solver": "lbfgs",
+      "fit_intercept": true,
+      "class_weight": null,
+      "max_iter": 1000,
+      "tol": 0.0001,
+      "random_state": 20261019
+    },
+    "retention_percentages": [
+      60,
+      70,
+      80,
+      90
+    ],
+    "primary_retention": 80,
+    "comparisons": [
+      [
+        "SC_WOE",
+        "S1"
+      ],
+      [
+        "SC_WOE",
+        "S0"
+      ]
+    ],
+    "tie_seed": "20261022",
+    "bootstrap": {
+      "seed": 20261022,
+      "repetitions": 2000,
+      "confidence": 0.95,
+      "algorithm": "PCG64(SeedSequence([seed,year])); integers int64; bincount; reselect",
+      "interval": "percentile_linear"
+    },
+    "tolerances": {
+      "probability": 1e-12,
+      "points": 1e-08,
+      "metric": 1e-12
+    },
+    "independent_validation_complete": false,
+    "sealed_years_read": false,
+    "windows": {
+      "W1": {
+        "train_end": "2013-12",
+        "train_count": 230702,
+        "year": 2014,
+        "count": 223102,
+        "bad": 41161
+      },
+      "W2": {
+        "train_end": "2014-12",
+        "train_count": 453804,
+        "year": 2015,
+        "count": 375543,
+        "bad": 75802
+      },
+      "2016_seen": {
+        "train_end": "2015-12",
+        "train_count": 829347,
+        "year": 2016,
+        "count": 293057,
+        "bad": 68229
+      }
+    }
+  },
+  "implementation_sha256": {
+    "scorecard_v1/README.md": "0e1095d66f7ced88c88b1969f54438a8c9e51762edfe59620eac789e048d3627",
+    "scorecard_v1/__init__.py": "551d147e53d9a38926e7827d264283b3f006956d1ae3d5b4af47e1a6fe3dcec2",
+    "scorecard_v1/audit.py": "a40c4c9f3435688520259b9cc7fba6e282adb5c122d543aecd8937ae79e92da0",
+    "scorecard_v1/binning.py": "988e4141d3345c95b2c9f4333255e28818248926b29fded8c3b1bbed0dc0d685",
+    "scorecard_v1/common.py": "74f0ace84c702ac39fcef88451f7a212b1f24eb0d9a27893007b13289d23b782",
+    "scorecard_v1/config.json": "83b8cda23ca87a5361664ecd67dd38cd663d9fc1beac0e585152089b2e0299e1",
+    "scorecard_v1/data.py": "96fb0d1e12d7fba12125dcb48814fb9c45b09e30870c430924c2a307aa475103",
+    "scorecard_v1/delivery.py": "790981e3f70424f055853fc50225643b743e1b8801f146e2ca6bb7b9ee178bb3",
+    "scorecard_v1/evaluate.py": "e848ebf4d69b789d81734bcff367e49ecac0a69102495becc55dfcd7cd040fed",
+    "scorecard_v1/model.py": "0d0a680742d94308c3c67ef1f6bb8bfec0e74e438c8949a753cddf7e78633e81",
+    "scorecard_v1/requirements.txt": "424fd693b02b897923d73479544c0034fed3bdeb9ab6fb1cd4638857da595ab7",
+    "scorecard_v1/run.py": "472d31b72581d291bd487599ba6840238d0f468a7a3d6c379bb4a33df5b49317",
+    "scorecard_v1/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scorecard_v1/tests/test_scorecard.py": "08901bf03a96946248c2b78c13a70976062555fe55a18a7e002b110f6e8d229b",
+    "scorecard_v1/woe.py": "0849c2698fe4dcde0293eda555c1313de108b22cefbaa70b6d146236cf1bb756"
+  },
+  "earlier_attempts": [
+    {
+      "directory": "outputs/scorecard_v1/20261102-185332-921174",
+      "status_sha256": "7b7dc6646a31cb35fd843710855d67802162c17840e19b7021f99efa8cdd24f1",
+      "status": "failed",
+      "failed_stage": "independent_audit",
+      "error": "log() got an unexpected keyword argument 'flush'",
+      "effects_may_have_been_viewed": true
+    },
+    {
+      "directory": "outputs/scorecard_v1/20261102-185529-848333",
+      "status_sha256": "b55e3dcff0241ad7a0b745e4af7f63ac507837f809b2009f30acb3da2e585fba",
+      "status": "failed",
+      "failed_stage": "independent_audit",
+      "error": "ufunc 'subtract' did not contain a loop with signature matching types (dtype('<U5'), dtype('float64')) -> None",
+      "effects_may_have_been_viewed": true
+    }
+  ],
+  "source_manifest_sha256": "7cf6ded6b16589d12b4ead758fa572fe33922f27ab957fe86647ef9b185751bd",
+  "plan_sha256": "d4f3ae4321c2e19e3da17b01988345f506d2ed8bfda97689acbbce86094beaba",
+  "algorithms": {
+    "numerical_bins": "quantile-linear, left-open/right-closed; first sparse bin, nearest adjacent risk; left tie",
+    "woe": "occupied training bins alpha=.5; neutral unobserved",
+    "psi": "all frozen bins alpha=.5; 2014 reference",
+    "bootstrap": "all shared N draws, fixed mappings and models, independently reselect K",
+    "ranking": "binary64 risk, sha256(20261022:loan_id), string loan_id"
+  },
+  "prior_information": "2014/2015 development; 2016 already seen; no new 2017/2018 rows",
+  "fixed_parameters_not_tuned": true
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "experiment": "scorecard_v1",
+  "features": ["fico_n", "purpose", "emp_length", "home_ownership_n"],
+  "numeric_prebins": 10,
+  "numeric_min_share": 0.05,
+  "category_min_share": 0.01,
+  "minimum_class_count": 20,
+  "quantile_method": "linear",
+  "alpha": 0.5,
+  "woe_direction": "ln(good_distribution/bad_distribution)",
+  "woe_denominator": "occupied_training_bins_only",
+  "psi_denominator": "all_frozen_bins_including_reserved",
+  "unknown_woe": 0.0,
+  "base_score": 600,
+  "base_good_bad_odds": 20,
+  "pdo": 50,
+  "model": {"C": 1.0, "solver": "lbfgs", "fit_intercept": true, "class_weight": null, "max_iter": 1000, "tol": 0.0001, "random_state": 20261019},
+  "retention_percentages": [60, 70, 80, 90],
+  "primary_retention": 80,
+  "comparisons": [["SC_WOE", "S1"], ["SC_WOE", "S0"]],
+  "tie_seed": "20261022",
+  "bootstrap": {"seed": 20261022, "repetitions": 2000, "confidence": 0.95, "algorithm": "PCG64(SeedSequence([seed,year])); integers int64; bincount; reselect", "interval": "percentile_linear"},
+  "tolerances": {"probability": 1e-12, "points": 1e-8, "metric": 1e-12},
+  "independent_validation_complete": false,
+  "sealed_years_read": false,
+  "windows": {
+    "W1": {"train_end": "2013-12", "train_count": 230702, "year": 2014, "count": 223102, "bad": 41161},
+    "W2": {"train_end": "2014-12", "train_count": 453804, "year": 2015, "count": 375543, "bad": 75802},
+    "2016_seen": {"train_end": "2015-12", "train_count": 829347, "year": 2016, "count": 293057, "bad": 68229}
+  }
+}
