@@ -1,0 +1,14 @@
+﻿检查项,状态,依据
+M1 来源及可研究性审计,完成，降级,source_metadata.json、data_audit.md；统一快照仍未证实
+M2 样本、时间与用途冻结,完成，回溯口径,sample_flow.csv、sample_ledger.csv.gz、split_manifest.csv、M2_freeze.json
+M3 WOE＋LR评分卡,完成,单调分箱、IV/相关筛选、8字段LR、分箱合并记录及系数
+M4 基准、LightGBM、评分和策略冻结,完成,FICO/LR/LightGBM、校准检查、M4_freeze.json；校准未触发，V_cal闲置
+M5 OOT及稳健性,完成，限定回溯结论,AUC/KS/Brier、校准、PSI、季度表现、冻结阈值；3/6/9个月人群敏感性
+M6 报告与复现,完成,完整研究报告、面试摘要、README、自动测试和独立核验
+严格历史回测,未通过且不宣称,标签/特征历史可得时间无法完整重建
+已验证充分成熟期,未通过且不宣称,2019-03和6个月缓冲均为研究假设
+借款人跨集严格隔离,不适用，检查已完成,member_id全部缺失；仅保证loan ID隔离
+Late归坏敏感性,不适用,符合主账龄筛查Late只有2笔，未达到冻结支持量
+校准器拟合,不适用,两模型V_model ECE均未超过预设0.01
+SHAP解释,完成,训练路径背景的原生TreeSHAP、固定OOT抽样和5个案例
+关键测试及独立重算,通过,6个测试；115项核验；指标最大误差1.11e-16

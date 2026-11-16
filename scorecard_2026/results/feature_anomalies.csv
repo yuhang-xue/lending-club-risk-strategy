@@ -1,0 +1,6 @@
+﻿split,field,negative_raw_count,invalid_income_count
+train,credit_history_months,0,0
+V_model,credit_history_months,0,0
+V_cal,credit_history_months,0,0
+V_policy,credit_history_months,0,0
+OOT,credit_history_months,0,0

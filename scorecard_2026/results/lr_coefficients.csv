@@ -1,0 +1,10 @@
+﻿field,coefficient,unexpected_positive,interpretation
+fico_mean,-0.7701552655772871,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+annual_inc,-0.6410340315991433,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+loan_income,-0.5682065838072669,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+dti,-0.4119917301324908,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+mort_acc,-0.22674585070412606,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+revol_util,-0.28353231174100874,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+inq_last_6mths,-1.0005240224246341,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+home_ownership,-0.32915790972829734,False,WOE=log(good_share/bad_share); conditional coefficient; not causal
+intercept,-1.9475193305647476,False,

@@ -1,0 +1,3 @@
+﻿group,n,bad,bad_rate,auc,ks,ks_risk_threshold,brier,ece,mean_pd
+observed,194357,28994,0.1491790879669886,0.6013593948197213,0.1536569889157018,-692.0,,,
+missing,0,0,,,,,,,

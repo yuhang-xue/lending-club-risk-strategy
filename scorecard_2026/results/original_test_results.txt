@@ -1,0 +1,11 @@
+test_ks_ties (test_core.Core.test_ks_ties) ... ok
+test_positive_calibration (test_core.Core.test_positive_calibration) ... ok
+test_psi_zero_bins (test_core.Core.test_psi_zero_bins) ... ok
+test_score_anchor_roundtrip (test_core.Core.test_score_anchor_roundtrip) ... ok
+test_tied_policy_and_empty (test_core.Core.test_tied_policy_and_empty) ... ok
+test_woe_train_monotonic_missing_unknown (test_core.Core.test_woe_train_monotonic_missing_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.013s
+
+OK

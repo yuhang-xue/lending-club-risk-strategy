@@ -1,0 +1,8 @@
+﻿task,trigger,evidence,status,reason
+Late label sensitivity,>=200 Late overall and >=20 each split,"Late n=2, split={'OOT': 2}",不适用,预设支持量不足
+60-month extension,optional independent expansion; main 36-month insufficient,36-month n=529915,不适用,主线支持充足，本轮范围限定36期
+member isolation,member_id usable,nonmissing=0,不适用,重复检查已执行；ID全缺失，只能loan粒度隔离
+same-variable algorithm contrast,claim isolated algorithm gain,only full-pipeline comparison is claimed,不适用,不主张纯算法增益
+risk-target CI constraint,external bad-rate target supplied,no external business target,不适用,仅通过率档位演示；仍报告描述性Wilson区间
+calibration LR,V_model ECE > 0.01 and independent V_cal support,ECE=0.004993; supported=True,不适用,none
+calibration LightGBM,V_model ECE > 0.01 and independent V_cal support,ECE=0.002199; supported=True,不适用,none

@@ -1,0 +1,7 @@
+﻿model,target,accepted_delta,accepted_bad_delta,accepted_good_delta,acceptance_delta_pp,not_equal_volume
+LR,0.5,9781,193,9588,5.032491754863477,True
+LR,0.7,2998,-1110,4108,1.5425222657274973,True
+LR,0.9,2328,-616,2944,1.1977958087436957,True
+LightGBM,0.5,9330,-667,9997,4.800444542774384,True
+LightGBM,0.7,2221,-2029,4250,1.1427424790462881,True
+LightGBM,0.9,1729,-1144,2873,0.8896000658581871,True

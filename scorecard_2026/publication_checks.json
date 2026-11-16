@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-16",
+  "original_run": "20261111T144556",
+  "core_tests": {
+    "passed": 6,
+    "failed": 0
+  },
+  "cli_help": "passed",
+  "markdown_local_links": "passed",
+  "report_pages": 18,
+  "policy_metrics_vs_published_tables": "passed",
+  "full_retraining": false,
+  "original_115_checks_rerun": false,
+  "changes": [
+    "portable --data argument",
+    "publication provenance path replaces private historical path"
+  ],
+  "report_sha256": "9d6c9bbc0d73eed583aac0e6ddeb6757d0e0d643273fc5f0fc79f59ba73f7bb1"
+}

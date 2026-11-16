@@ -1,0 +1,23 @@
+﻿field,source,evidence,simulated_decision,strict_pass,limitation
+loan_amnt,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+annual_inc,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+dti,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+delinq_2yrs,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+inq_last_6mths,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+open_acc,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+pub_rec,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+pub_rec_bankruptcies,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+tax_liens,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+mort_acc,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+total_acc,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+revol_util,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+revol_bal,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+purpose,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+home_ownership,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+addr_state,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+emp_length,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+fico_range_low,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+fico_range_high,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+earliest_cr_line,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+verification_status,raw loan extract,field definition at origination; no historical update log,not reconstructed,False,retrospective approximation
+loan_status,single raw file,last_pymnt_d is NOT confirmation time; snapshot unverified,not reconstructed,False,resolved-subset retrospective label

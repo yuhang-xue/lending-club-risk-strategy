@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "source_row_accounting": true,
+  "loan_id_unique": true,
+  "split_disjoint": true,
+  "train_monotonicity": true,
+  "preprocessing_fit_train_only": true,
+  "model_reload_max_error": 0.0,
+  "max_additive_score_error": 1.1368683772161603e-13,
+  "score_roundtrip_max_error": 4.440892098500626e-16,
+  "thresholds_frozen_before_OOT": true,
+  "strict_maturity_verified": false,
+  "strict_historical_backtest": false,
+  "completed_at": "2026-11-11T14:46:52.991942+08:00"
+}

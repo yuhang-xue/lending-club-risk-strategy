@@ -1,93 +1,71 @@
-# Lending Club 历史贷款风险排序与筛选回溯评估
+# LendingClub 信贷风险分析与准入策略评估
 
-**研究问题：在历史已放款且已终结的共同样本中，同样保留约80%的贷款，四字段逻辑回归相对信用分基线的保留核销率如何？**
+基于公开贷款数据，完成数据审计、WOE评分卡、树模型对照及冻结准入策略评估。当前主展示为 **36期已决贷款批次回溯研究**，正式运行 `20261111T144556`，仓库更新于2026-11-16。
 
-**当前版本（2026-11-04）：历史S0/S1/S2比较与四字段WOE评分卡的实现、聚合结果和公开复现入口已提供；正式独立验证及实际收益评估仍未完成。** 80%为样本保留率，不是全量申请审批通过率。见[最新核验与数据缺口](docs/historical-review/README.md)。
+[完整研究报告 PDF](docs/current-scorecard/LendingClub_风险评分卡研究报告.pdf) · [当前复现代码](scorecard_2026/README.md) · [聚合结果表](scorecard_2026/results/)
 
-基于[Zenodo公开数据](https://zenodo.org/records/11295916)的 **1,347,681笔、15字段** 整理版贷款；Default按发布者定义为1=最终核销、0=全部结清。按批准年份切分：2007—2015训练，2016已查看补充评价，2017—2018仅核查状态汇总与适用性、未作策略效果评价。2014/2015采用只用此前年份训练的扩展开发窗口（训练起点固定为2007年）。详见[方法与SQL口径](docs/方法与SQL复现.md)。
+## 研究问题与工作内容
 
-- **S0**：信用分越高越优先保留。
-- **S1**：FICO、用途、就业年限、住房状态四字段逻辑回归。
-- **S2**：S1加收入，用于检验增量；模型参数固定，无调参或特征搜索。
+相较仅用 FICO 排序，多字段模型能否改善已放款客群的风险区分与模拟准入？
 
-在每年共同贷款集合上，三策略均保留 `K=80*N//100` 笔。下表为候选减参照的保留人群核销比例差，单位**百分点**；负值代表候选更低。95%区间来自每年2,000次贷款配对bootstrap，每次重新等量筛选。
+- 审计2,260,701行、151列，构建529,915笔36期已决贷款样本。
+- 按放款月份隔离训练、调参、校准、策略验证和留出集，排除评级、利率及贷后字段。
+- 构建8变量WOE-LR评分卡，与LightGBM对照；比较完整建模流程，不宣称纯算法增益。
+- 冻结策略阈值，分析通过量、通过坏率、误拒和漏放，诊断校准及分组风险低估。
 
-| 评价年 | 样本数 | 保留数 | S1−S0 [95%区间] | S2−S1 [95%区间] |
-|---|---:|---:|---:|---:|
-| 2014（开发） | 223,102 | 178,481 | −0.386 [−0.478, −0.305] | −0.071 [−0.140, −0.003] |
-| 2015（开发） | 375,543 | 300,434 | −0.500 [−0.570, −0.428] | +0.069 [+0.020, +0.119] |
-| 2016（已查看补充） | 293,057 | 234,445 | −0.706 [−0.794, −0.621] | −0.073 [−0.128, −0.017] |
+## 模型效果
 
-[完整区间与精确数字](results/reference/bootstrap_intervals.csv) · [策略指标](results/reference/primary_metrics.csv) · [SQL交换分析](results/reference/sql/08_strategy_cross.csv)
+留出集为2015年1—9月放款的194,357笔已决贷款，实际坏样本率14.92%。
 
-![保留比例与核销比例权衡](figures/retention-chargeoff.png)
+| 方法 | AUC | KS |
+|---|---:|---:|
+| FICO | 0.6014 | 0.1537 |
+| WOE-LR | 0.6420 | 0.2044 |
+| LightGBM | 0.6628 | 0.2360 |
 
-图中四个点对应已有60%/70%/80%/90%情景，连线仅辅助阅读。[绘图代码](src/plot_tradeoff.py)直接读取已有结果，不重训。
+![风险区分效果](docs/current-scorecard/figures/roc_ks.png)
 
-**结论：S1作为后续验证候选；S2的开发期增量方向不一致，因此不采用。** 2015年两策略均保留300,434笔，S0/S1保留核销数分别为56,252/54,751，少保留1,501笔；核销率差为−0.499610563385个百分点。这属于离线样本比较，不能解释为实际避免的核销或损失。
+## 冻结准入策略
 
-**局限：没有合格独立验证，2016已查看；仅含已放款且已终结贷款；缺可靠借款人标识、结果日期和统一快照，无法重建历史标签可用性。** 区间不覆盖开发选择偏差、训练不确定性、成熟度与未来环境变化，未控制借款人聚类；不是上线收益或因果估计。2014—2016同样存在终态选择限制，不能把批准年切分当作训练标签当时已知的证明。
+70%为策略验证集开发目标，阈值固定后应用于留出集。
 
-## 金额与收益边界
+| 方法 | 留出模拟通过率 | 通过客群坏样本率 |
+|---|---:|---:|
+| FICO | 70.26% | 12.90% |
+| WOE-LR | 71.80% | 11.82% |
+| LightGBM | 71.40% | 11.23% |
 
-新增[金额代理与收益敏感性分析](docs/historical-review/经济情景分析.md)：同量保留并不等于同资金投入；loan_amnt仅作金额代理。216个假设情景的净现值差有正有负，不能据此认定真实收益改善。缺实际本金、逐期回款、回收和费用时，实际经济结论保持未完成。
+LightGBM相对FICO净多通过4,250笔好样本、净少通过2,029笔坏样本，总通过量净增2,221笔。**通过量不同，这是离线固定策略比较，不是等量实验、真实新增客户或线上收益。**
 
-## 四字段WOE评分卡
+![策略取舍](docs/current-scorecard/figures/policy_comparison.png)
 
-评分卡沿用FICO、用途、就业年限和住房状态；仅在各窗口训练样本拟合分箱与WOE，再训练固定逻辑回归。600分对应模型隐含好坏比20:1，PDO=50；分值可加总，不表示概率已经校准。
+## 概率低估诊断
 
-|已研究年份|评分卡−S1保留核销率（百分点）|95%配对区间|
-|---|---:|---|
-|2014|−0.030816|[−0.072837, +0.012887]|
-|2015|−0.028625|[−0.068909, +0.003329]|
-|2016|−0.046066|[−0.087451, +0.001280]|
+LR与LightGBM平均预测为12.80%、12.92%，低于实际14.92%。DTI≥25%组实际坏率19.54%，两模型预测15.52%、16.18%。分数分布PSI较低仍可能存在概率低估；后续校准需新的开发与检验样本。
 
-**三年主差值区间均跨0，未支持用评分卡替换S1。** 该结论不表示两种模型完全等效。[评分卡方法与结果](docs/评分卡方法与结果.md)提供公式、聚合证据和稳定性口径；[实现及复现](scorecard_v1/README.md)说明如何从原始CSV和已审计基线重新运行。
+## 数据与验证设计
 
-## 当前材料与版本
+| 集合 | 放款月份 | 样本数 |
+|---|---|---:|
+| 训练 | 2007-06—2013-12 | 172,988 |
+| 调参验证 | 2014-01—2014-04 | 47,339 |
+| 校准保留 | 2014-05—2014-08 | 57,840 |
+| 策略验证 | 2014-09—2014-12 | 57,391 |
+| 较晚批次留出 | 2015-01—2015-09 | 194,357 |
 
-- [当前策略评审摘要](docs/当前策略评审摘要.md)：统一说明基线、评分卡与下一步。
-- [简历指标与证据](docs/简历指标与证据.md)：对应1,501笔、三年评分卡区间和固定卡PSI。
-- [版本与覆盖范围](docs/版本与覆盖范围.md)：区分当前公开实现、本地补充分析与历史展示。
-- [15字段审核](docs/字段审核表.csv) · [监控与处置方案](docs/监控与处置方案.md) · [指标字典](docs/监控指标字典.csv)。
+来源：[Kaggle wordsforthewise/lending-club](https://www.kaggle.com/datasets/wordsforthewise/lending-club)。Fully Paid=0，Charged Off/Default=1，排除未决样本。校准本次未触发，保留集未挪作训练。
 
-`src/`为基线与评分卡运行入口，`scorecard_v1/`为分箱、WOE/IV、评分、筛选与PSI实现；`sql/`为9份SQLite查询及schema，`audit/`负责结果对账。旧PDF为2026-10-24历史快照，已移至[历史展示目录](docs/archive/20261024/README.md)，当前结论以本首页和当前摘要为准。
+统一状态快照和标签确认时间未知，不是严格历史回测；借款人标识缺失，无法保证借款人跨集合隔离。2015批次曾用于旧项目，仅保证本轮开发隔离，不是首次未见外部验证。不覆盖拒绝客群，概率不是一年违约率，无经营收益结论。FICO策略、分组诊断及案例是事后描述扩展。
 
-## 复现
+## 交付与复现
 
-Python 3.13，建议至少4GB可用内存和2GB磁盘。下载[原始CSV](https://zenodo.org/api/records/11295916/files/LC_loans_granting_model_dataset.csv/content)放入 `data/raw/LC_loans_granting_model_dataset.csv`；[数据说明](data/README.md)含哈希与下载来源。不要用Excel另存原文件。
+- `scorecard_2026/src/`、`configs/`、`tests/`：当前实现、配置和核心测试。
+- `scorecard_2026/results/`：聚合模型、策略、评分、校准与稳定性结果。
+- `docs/current-scorecard/`：最新研究报告及图表。
+- [复现说明](scorecard_2026/README.md)：使用 --data 指定自备原始文件，不发布逐笔数据或模型。
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python src/run.py --data data/raw/LC_loans_granting_model_dataset.csv --output outputs/reproduction
-python audit/verify.py --run outputs/reproduction
-```
+原运行保存6个关键测试、115项独立脚本检查，最大指标数值差约1.11×10⁻¹⁶。本次为发布适配与代码验证，未完整重训；历史核验与本次检查分开记录。
 
-输出目录必须不存在。流程从CSV重建固定三年窗口S1/S2，执行6,000次配对bootstrap和9份SQL，不依赖旧项目、MySQL账号或历史模型。SQL01/02读取仓库附带的99行已发布上游状态汇总，其完整状态无法从已终结贷款CSV还原。模型、逐笔结果及SQLite数据库仅在已忽略的 `outputs/` 本地生成。
+## 历史研究
 
-验收要求：历史整数与NULL位置一致，浮点绝对误差≤1e−12；检查报告为 `outputs/reproduction/verification.json`。实测环境、耗时及对账记录见[复现验收](docs/复现验收.md)。
-
-## 评分卡复现与轻量核验
-
-评分卡使用单独锁定的依赖快照；建议为完整基线+评分卡重放新建环境，避免改变旧基线已记录环境：
-
-```sh
-python3 -m venv .venv-scorecard
-.venv-scorecard/bin/python -m pip install -r requirements-scorecard.txt
-.venv-scorecard/bin/python -m unittest discover -s scorecard_v1/tests -v
-.venv-scorecard/bin/python src/run.py --data data/raw/LC_loans_granting_model_dataset.csv --output outputs/baseline_for_scorecard
-.venv-scorecard/bin/python src/run_scorecard.py --data data/raw/LC_loans_granting_model_dataset.csv --baseline-run outputs/baseline_for_scorecard --output outputs/scorecard_reproduction
-```
-
-两个输出目录都必须不存在。评分卡入口先核验基线，再从原始CSV重训三张卡、执行每年2,000次配对重选和固定W1卡PSI；不需要本地私有路径、旧模型或历史中间文件。只对2007—2016开发/已查看范围训练和评价，2017—2018不作效果分析。逐笔结果和模型只写入已忽略的outputs目录。
-
-无需下载贷款数据也可检查公开聚合证据和运行合成边界测试：
-
-```sh
-.venv-scorecard/bin/python audit/verify_scorecard_public.py
-.venv-scorecard/bin/python -m unittest discover -s scorecard_v1/tests -v
-```
-
-聚合核验不等于重新训练或独立验证。[当前复现记录](docs/评分卡公开复现记录.md)区分本次实际执行与历史核验。
+[旧版四字段／80%同量保留研究](README_legacy.md)及原根目录代码保留。旧版基于Zenodo的134.8万笔整理数据，与当前Kaggle多字段研究不是同一实验，请勿混用结果。

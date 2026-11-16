@@ -1,0 +1,7 @@
+﻿model,reference,current,psi,investigate
+LR,train,valid,0.015408005712106,False
+LR,valid,OOT,0.00274960262462981,False
+LR,train,OOT,0.005625840449626257,False
+LightGBM,train,valid,0.009932936881952655,False
+LightGBM,valid,OOT,0.0007516993461368014,False
+LightGBM,train,OOT,0.005745015579811094,False
